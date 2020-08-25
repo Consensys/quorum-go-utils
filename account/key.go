@@ -96,3 +96,18 @@ func PrivateKeyToHexString(key *ecdsa.PrivateKey) (string, error) {
 	}
 	return hex.EncodeToString(byt), nil
 }
+
+// ZeroKey zeroes the underlying bytes of the key
+func ZeroKey(key *ecdsa.PrivateKey) {
+	b := key.D.Bits()
+	for i := range b {
+		b[i] = 0
+	}
+}
+
+// Zero zeroes the bytes
+func Zero(byt []byte) {
+	for i := range byt {
+		byt[i] = 0
+	}
+}
