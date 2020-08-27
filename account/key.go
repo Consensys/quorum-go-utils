@@ -111,3 +111,14 @@ func Zero(byt []byte) {
 		byt[i] = 0
 	}
 }
+
+// Sign simply signs the data with the provided key using secp256k1.  It performs no pre/post-computation of the data - if this is required it should be performed by the caller.
+func Sign(toSign []byte, key *ecdsa.PrivateKey) ([]byte, error) {
+	keyByt, err := PrivateKeyToBytes(key)
+	if err != nil {
+		return nil, err
+	}
+	defer Zero(keyByt)
+
+	return secp256k1.Sign(toSign, keyByt)
+}
