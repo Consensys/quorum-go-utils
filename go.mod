@@ -1,4 +1,4 @@
-module github.com/jpmorganchase/quorum-go-utils
+module github.com/consensys/quorum-go-utils
 
 go 1.13
 
