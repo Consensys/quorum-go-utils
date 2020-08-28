@@ -3,9 +3,8 @@ package client
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	"github.com/consensys/quorum-go-utils/types"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestConsensus_BadResponse(t *testing.T) {
