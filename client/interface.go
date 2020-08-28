@@ -1,7 +1,7 @@
 package client
 
 import (
-	"quorumengineering/quorum-report/types"
+	"github.com/consensys/quorum-go-utils/types"
 )
 
 type Client interface {

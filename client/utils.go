@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 
-	"quorumengineering/quorum-report/log"
-	"quorumengineering/quorum-report/types"
+	"github.com/consensys/quorum-go-utils/types"
+	"github.com/consensys/quorum-report/log"
 )
 
 func DumpAddress(c Client, address types.Address, blockNumber uint64) (*types.AccountState, error) {

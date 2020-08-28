@@ -1,6 +1,6 @@
 package client
 
-import "quorumengineering/quorum-report/types"
+import "github.com/consensys/quorum-go-utils/types"
 
 // templates for GraphQL queries
 

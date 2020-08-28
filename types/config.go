@@ -7,7 +7,7 @@ import (
 
 	"github.com/naoina/toml"
 
-	"quorumengineering/quorum-report/log"
+	"github.com/consensys/quorum-report/log"
 )
 
 type ElasticsearchConfig struct {

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"quorumengineering/quorum-report/types"
+	"github.com/consensys/quorum-go-utils/types"
 	"strconv"
 	"strings"
 	"sync"
@@ -13,7 +13,7 @@ import (
 
 	"github.com/gorilla/websocket"
 
-	"quorumengineering/quorum-report/log"
+	"github.com/consensys/quorum-report/log"
 )
 
 type message struct {

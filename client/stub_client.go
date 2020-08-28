@@ -5,7 +5,7 @@ import (
 	"errors"
 	"reflect"
 
-	"quorumengineering/quorum-report/types"
+	"github.com/consensys/quorum-go-utils/types"
 )
 
 // StubQuorumClient is used for unit test.
