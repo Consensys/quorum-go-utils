@@ -13,7 +13,7 @@ import (
 
 	"github.com/gorilla/websocket"
 
-	"github.com/consensys/quorum-report/log"
+	"github.com/consensys/quorum-go-utils/log"
 )
 
 type message struct {

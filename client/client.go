@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/consensys/quorum-go-utils/log"
 	"github.com/consensys/quorum-go-utils/types"
-	"github.com/consensys/quorum-report/log"
 	"github.com/machinebox/graphql"
 )
 
