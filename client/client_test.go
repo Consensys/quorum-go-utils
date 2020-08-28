@@ -39,6 +39,25 @@ func TestQuorumClient(t *testing.T) {
 	// Convert http://127.0.0.1 to ws://127.0.0.1.
 	rpcurl := "ws" + strings.TrimPrefix(rpcServer.URL, "http")
 
+	// Connect to the server.
+	ws, _, err := websocket.DefaultDialer.Dial(rpcurl, nil)
+	assert.NoError(t, err)
+	_ = ws.Close()
+
+	_, err = NewQuorumClient("ws://invalid")
+	assert.Error(t, err)
+
+	_, err = NewQuorumClient(rpcurl)
+	assert.NoError(t, err)
+}
+
+func TestQuorumGraphQLClient(t *testing.T) {
+	// Create test rpc websocket server with the echo handler.
+	rpcServer := httptest.NewServer(http.HandlerFunc(echo))
+	defer rpcServer.Close()
+	// Convert http://127.0.0.1 to ws://127.0.0.1.
+	rpcurl := "ws" + strings.TrimPrefix(rpcServer.URL, "http")
+
 	// Create test graphql server.
 	graphqlServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		b, _ := ioutil.ReadAll(r.Body)
@@ -58,17 +77,17 @@ func TestQuorumClient(t *testing.T) {
 
 	// Connect to the server.
 	ws, _, err := websocket.DefaultDialer.Dial(rpcurl, nil)
-	assert.Nil(t, err, "expected no error, but got %v", err)
+	assert.NoError(t, err)
 	_ = ws.Close()
 
-	_, err = NewQuorumClient("ws://invalid", "http://invalid")
-	assert.NotNil(t, err, "expected error but got nil")
+	_, err = NewQuorumGraphQLClient("ws://invalid", "http://invalid")
+	assert.Error(t, err)
 
-	_, err = NewQuorumClient(rpcurl, "http://invalid")
-	assert.NotNil(t, err, "expected error but got nil")
+	_, err = NewQuorumGraphQLClient(rpcurl, "http://invalid")
+	assert.Error(t, err)
 
-	_, err = NewQuorumClient(rpcurl, graphqlServer.URL)
-	assert.Nil(t, err, "expected no error, but got %v", err)
+	_, err = NewQuorumGraphQLClient(rpcurl, graphqlServer.URL)
+	assert.NoError(t, err)
 }
 
 func TestStubQuorumClient(t *testing.T) {
@@ -84,7 +103,7 @@ func TestStubQuorumClient(t *testing.T) {
 	// test mock GraphQL
 	var resp map[string]interface{}
 	err = c.ExecuteGraphQLQuery(&resp, "query")
-	assert.Nil(t, err, "expected no error, but got %v", err)
+	assert.NoError(t, err)
 	assert.Equal(t, "world", resp["hello"], "expected resp hello world, but got %v", resp["hello"])
 
 	err = c.ExecuteGraphQLQuery(&resp, "random")
@@ -93,7 +112,7 @@ func TestStubQuorumClient(t *testing.T) {
 	// test mock RPC
 	var res string
 	err = c.RPCCall(&res, "rpc_method")
-	assert.Nil(t, err, "expected no error, but got %v", err)
+	assert.NoError(t, err)
 	assert.Equal(t, "hi", res, "expected res hi, but got %v", res)
 
 	err = c.RPCCall(&res, "rpc_nil")

@@ -23,10 +23,9 @@ type QuorumClient struct {
 	shutdownWg   sync.WaitGroup
 }
 
-func NewQuorumClient(rawUrl, qgUrl string) (*QuorumClient, error) {
+func newWebsocketQuorumClient(rawUrl string) (*QuorumClient, error) {
 	quorumClient := &QuorumClient{
-		graphqlClient: graphql.NewClient(qgUrl),
-		shutdownChan:  make(chan struct{}),
+		shutdownChan: make(chan struct{}),
 	}
 
 	log.Debug("Connecting to Quorum WebSocket endpoint", "rawUrl", rawUrl)
@@ -37,22 +36,49 @@ func NewQuorumClient(rawUrl, qgUrl string) (*QuorumClient, error) {
 	quorumClient.wsClient = wsClient
 	log.Debug("Connected to WebSocket endpoint")
 
+	return quorumClient, nil
+}
+
+func NewQuorumClient(rawUrl string) (*QuorumClient, error) {
+	c, err := newWebsocketQuorumClient(rawUrl)
+	if err != nil {
+		return nil, err
+	}
+
+	// Start websocket receiver.
+	go func() {
+		c.shutdownWg.Add(1)
+		c.wsClient.listen(c.shutdownChan)
+		c.shutdownWg.Done()
+	}()
+
+	return c, nil
+}
+
+func NewQuorumGraphQLClient(rawUrl, qgUrl string) (*QuorumClient, error) {
+	c, err := newWebsocketQuorumClient(rawUrl)
+	if err != nil {
+		return nil, err
+	}
+
+	c.graphqlClient = graphql.NewClient(qgUrl)
+
 	// Test graphql endpoint connection.
 	log.Debug("Connecting to GraphQL endpoint", "url", qgUrl)
 	var resp map[string]interface{}
-	if err := quorumClient.ExecuteGraphQLQuery(&resp, CurrentBlockQuery()); err != nil || len(resp) == 0 {
+	if err := c.ExecuteGraphQLQuery(&resp, CurrentBlockQuery()); err != nil || len(resp) == 0 {
 		return nil, errors.New("call graphql endpoint failed")
 	}
 	log.Debug("Connected to GraphQL endpoint")
 
 	// Start websocket receiver.
 	go func() {
-		quorumClient.shutdownWg.Add(1)
-		quorumClient.wsClient.listen(quorumClient.shutdownChan)
-		quorumClient.shutdownWg.Done()
+		c.shutdownWg.Add(1)
+		c.wsClient.listen(c.shutdownChan)
+		c.shutdownWg.Done()
 	}()
 
-	return quorumClient, nil
+	return c, nil
 }
 
 // Subscribe to chain head event.
