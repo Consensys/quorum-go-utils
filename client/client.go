@@ -96,13 +96,22 @@ func (qc *QuorumClient) ExecuteGraphQLQuery(result interface{}, query string) er
 
 // Execute customized rpc call.
 func (qc *QuorumClient) RPCCall(result interface{}, method string, args ...interface{}) error {
+	return qc.rpcCall(time.Second, result, method, args)
+}
+
+func (qc *QuorumClient) RPCCallWithTimeout(timeout time.Duration, result interface{}, method string, args ...interface{}) error {
+	return qc.rpcCall(timeout, result, method, args)
+}
+
+// Execute customized rpc call.
+func (qc *QuorumClient) rpcCall(timeout time.Duration, result interface{}, method string, args []interface{}) error {
 	resultChan := make(chan *message, 1)
 	err := qc.wsClient.sendRPCMsg(resultChan, method, args...)
 	if err != nil {
 		return err
 	}
 
-	ticker := time.NewTicker(time.Second * 1)
+	ticker := time.NewTicker(timeout)
 	defer ticker.Stop()
 	select {
 	case response := <-resultChan:
