@@ -2,6 +2,8 @@ package account
 
 import (
 	"crypto/ecdsa"
+	"crypto/elliptic"
+	"crypto/rand"
 	"encoding/hex"
 	"math/big"
 	"testing"
@@ -169,4 +171,39 @@ func TestPrivateKeyToHexString_NilKeyError(t *testing.T) {
 	_, err := PrivateKeyToHexString(nil)
 
 	require.EqualError(t, err, "nil key")
+}
+
+func TestZeroKey(t *testing.T) {
+	k, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	require.NoError(t, err)
+
+	require.NotZero(t, len(k.D.Bytes()))
+	ZeroKey(k)
+	require.Empty(t, k.D.Bytes())
+}
+
+func TestZero(t *testing.T) {
+	byt := []byte{1, 2, 3, 4}
+
+	Zero(byt)
+
+	want := []byte{0, 0, 0, 0}
+	require.Equal(t, want, byt)
+}
+
+func TestSign(t *testing.T) {
+	toSign := []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32}
+
+	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	require.NoError(t, err)
+
+	want, err := secp256k1.Sign(toSign, key.D.Bytes())
+	require.NoError(t, err)
+
+	got, err := Sign(toSign, key)
+	require.NoError(t, err)
+	require.Equal(t, want, got)
+
+	// key can be reused
+	require.NotEmpty(t, key)
 }

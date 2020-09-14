@@ -55,6 +55,16 @@ func TestNewAddressFromHex_InvalidLength(t *testing.T) {
 	require.EqualError(t, err, "account address must have length 20 bytes")
 }
 
+func TestAddress_ToBytes(t *testing.T) {
+	byt := [20]byte{218, 113, 240, 116, 70, 237, 30, 202, 48, 68, 133, 221, 0, 196, 130, 126, 208, 152, 73, 152}
+
+	var addr = Address(byt)
+
+	got := addr.ToBytes()
+
+	require.Equal(t, byt[:], got)
+}
+
 func TestAddress_ToHexString(t *testing.T) {
 	var addr = Address([20]byte{218, 113, 240, 116, 70, 237, 30, 202, 48, 68, 133, 221, 0, 196, 130, 126, 208, 152, 73, 152})
 	want := "da71f07446ed1eca304485dd00c4827ed0984998"
