@@ -113,9 +113,17 @@ type StorageItem struct {
 type ReportingResponseTemplate struct {
 	Address       Address        `json:"address"`
 	HistoricState []*ParsedState `json:"historicState"`
+	Total         uint64         `json:"total"`
+	Options       *PageOptions   `json:"options"`
 }
 
 type ParsedState struct {
 	BlockNumber     uint64         `json:"blockNumber"`
 	HistoricStorage []*StorageItem `json:"historicStorage"`
+}
+
+type StorageResult struct {
+	Storage     map[Hash]string
+	StorageRoot Hash
+	BlockNumber uint64
 }

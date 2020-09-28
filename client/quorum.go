@@ -27,13 +27,12 @@ func newWebsocketQuorumClient(rawUrl string) (*QuorumClient, error) {
 	quorumClient := &QuorumClient{
 		shutdownChan: make(chan struct{}),
 	}
-
+	var err error
 	log.Debug("Connecting to Quorum WebSocket endpoint", "rawUrl", rawUrl)
-	wsClient, err := newWebSocketClient(rawUrl)
+	quorumClient.wsClient, err = newWebSocketClient(rawUrl)
 	if err != nil {
 		return nil, errors.New("connect Quorum WebSocket endpoint failed")
 	}
-	quorumClient.wsClient = wsClient
 	log.Debug("Connected to WebSocket endpoint")
 
 	return quorumClient, nil
@@ -111,8 +110,8 @@ func (qc *QuorumClient) rpcCall(timeout time.Duration, result interface{}, metho
 		return err
 	}
 
-	ticker := time.NewTicker(timeout)
-	defer ticker.Stop()
+	rpcCallTimeout := time.NewTicker(timeout)
+	defer rpcCallTimeout.Stop()
 	select {
 	case response := <-resultChan:
 		if response == nil {
@@ -127,7 +126,7 @@ func (qc *QuorumClient) rpcCall(timeout time.Duration, result interface{}, metho
 			reflect.ValueOf(result).Elem().Set(reflect.ValueOf(response.Result))
 		}
 		return nil
-	case <-ticker.C:
+	case <-rpcCallTimeout.C:
 		return errors.New("rpc call timeout")
 	}
 }

@@ -58,21 +58,20 @@ func TestTraceTransaction_WithError(t *testing.T) {
 
 	trace, err := TraceTransaction(stubClient, types.NewHash("0x0000000000000000000000000000000000000000000000000000000000000000"))
 	assert.EqualError(t, err, "not found")
-	assert.Nil(t, trace)
+	assert.Equal(t, trace, types.RawOuterCall{})
 }
 
 func TestTraceTransaction(t *testing.T) {
-	res := map[string]interface{}{
-		"customField": "value",
-	}
 	mockRPC := map[string]interface{}{
-		"debug_traceTransaction0x0000000000000000000000000000000000000000000000000000000000000000<*client.TraceConfig Value>": res,
+		"debug_traceTransaction0x0000000000000000000000000000000000000000000000000000000000000000<*client.TraceConfig Value>": types.RawOuterCall{
+			Calls: []types.RawInnerCall{{}},
+		},
 	}
 	stubClient := NewStubQuorumClient(nil, mockRPC)
 
 	trace, err := TraceTransaction(stubClient, types.NewHash("0x0000000000000000000000000000000000000000000000000000000000000000"))
 	assert.Nil(t, err)
-	assert.Equal(t, res, trace)
+	assert.Len(t, trace.Calls, 1)
 }
 
 func TestDumpAddress_WithError(t *testing.T) {
@@ -103,14 +102,14 @@ func TestDumpAddress(t *testing.T) {
 
 func TestGetCode(t *testing.T) {
 	mockRPC := map[string]interface{}{
-		"eth_getCode0x1349f3e1b8d71effb47b840594ff27da7e603d170xe625ba9f14eed0671508966080fb01374d0a3a16b9cee545a324179b75f30aa8": types.HexData("efe5cb8d23d632b5d2cdd9f0a151c4b1a84ccb7afa1c57331009aa922d5e4f36"),
+		"eth_getCode0x1349f3e1b8d71effb47b840594ff27da7e603d170x5": types.HexData("efe5cb8d23d632b5d2cdd9f0a151c4b1a84ccb7afa1c57331009aa922d5e4f36"),
 	}
 	stubClient := NewStubQuorumClient(nil, mockRPC)
 
-	blockHash := types.NewHash("0xe625ba9f14eed0671508966080fb01374d0a3a16b9cee545a324179b75f30aa8")
+	blockNum := uint64(5)
 	address := types.NewAddress("0x1349f3e1b8d71effb47b840594ff27da7e603d17")
 
-	code, err := GetCode(stubClient, address, blockHash)
+	code, err := GetCode(stubClient, address, blockNum)
 	assert.Nil(t, err)
 	assert.Equal(t, "0xefe5cb8d23d632b5d2cdd9f0a151c4b1a84ccb7afa1c57331009aa922d5e4f36", code.String())
 }
@@ -118,10 +117,10 @@ func TestGetCode(t *testing.T) {
 func TestGetCode_WithError(t *testing.T) {
 	stubClient := NewStubQuorumClient(nil, nil)
 
-	blockHash := types.NewHash("0xe625ba9f14eed0671508966080fb01374d0a3a16b9cee545a324179b75f30aa8")
+	blockNum := uint64(5)
 	address := types.NewAddress("0x1349f3e1b8d71effb47b840594ff27da7e603d17")
 
-	code, err := GetCode(stubClient, address, blockHash)
+	code, err := GetCode(stubClient, address, blockNum)
 	assert.EqualError(t, err, "not found")
 	assert.Equal(t, types.HexData(""), code)
 }
@@ -316,4 +315,25 @@ func TestCallBalanceOfERC20(t *testing.T) {
 	contractCallResult, err := CallBalanceOfERC20(stubClient, tokenContract, holder, 1)
 	assert.Nil(t, err)
 	assert.Equal(t, types.HexData("12345"), contractCallResult)
+}
+
+func TestStorageRoot_WithError(t *testing.T) {
+	stubClient := NewStubQuorumClient(nil, nil)
+
+	result, err := StorageRoot(stubClient, types.NewAddress(""), 1)
+	assert.EqualError(t, err, "not found")
+	assert.EqualValues(t, "", result)
+}
+
+func TestStorageRoot(t *testing.T) {
+	mockRPC := map[string]interface{}{
+		"eth_storageRoot0x00000000000000000000000000000000000000000x1": types.NewHash("1"),
+	}
+
+	stubClient := NewStubQuorumClient(nil, mockRPC)
+
+	result, err := StorageRoot(stubClient, types.NewAddress(""), 1)
+
+	assert.Nil(t, err)
+	assert.EqualValues(t, "0000000000000000000000000000000000000000000000000000000000000001", result)
 }
