@@ -1,4 +1,4 @@
-module github.com/consensys/quorum-go-utils
+module github.com/ConsenSys/quorum-go-utils
 
 go 1.13
 
