@@ -9,7 +9,7 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/jpmorganchase/quorum/crypto/secp256k1"
+	"github.com/ConsenSys/quorum/crypto/secp256k1"
 	"golang.org/x/crypto/sha3"
 )
 

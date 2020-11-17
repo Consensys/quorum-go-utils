@@ -3,8 +3,8 @@ module github.com/consensys/quorum-go-utils
 go 1.13
 
 require (
+	github.com/ConsenSys/quorum/crypto/secp256k1 v0.0.0-20201109194625-1ecd42625e8e
 	github.com/gorilla/websocket v1.4.2
-	github.com/jpmorganchase/quorum/crypto/secp256k1 v0.0.0-20200819121702-fa97b9d9ee78
 	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/machinebox/graphql v0.2.2
 	github.com/matryer/is v1.4.0 // indirect
