@@ -1,5 +1,5 @@
 # Quorum go utils
 
-This project contains common golang types and functions used when developing Quorum-tools.
+This project contains common golang types and functions that can be used when developing tools for Quorum.
 
  
