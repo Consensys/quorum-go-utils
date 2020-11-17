@@ -12,6 +12,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestGenerateKey(t *testing.T) {
+	got, err := GenerateKey()
+	require.NoError(t, err)
+	require.NotNil(t, got)
+	require.NotEqual(t, big.NewInt(0), got.D)
+}
+
 func TestNewKeyFromHexString(t *testing.T) {
 	var (
 		hexKey  = "1fe8f1ad4053326db20529257ac9401f2e6c769ef1d736b8c2f5aba5f787c72b"

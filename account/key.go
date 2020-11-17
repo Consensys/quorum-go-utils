@@ -3,6 +3,7 @@ package account
 import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
+	"crypto/rand"
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -16,6 +17,11 @@ import (
 const (
 	keyLen = 32 // the expected length in bytes of a S256 secp256k1 private key
 )
+
+// GenerateKey generates a new random secp256k1 key
+func GenerateKey() (*ecdsa.PrivateKey, error) {
+	return ecdsa.GenerateKey(secp256k1.S256(), rand.Reader)
+}
 
 // NewKeyFromHexString creates a new PrivateKey from the provided hex string-representation.
 // The hex key can be with/without the '0x' prefix.
