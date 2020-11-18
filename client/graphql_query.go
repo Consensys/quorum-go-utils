@@ -1,6 +1,6 @@
 package client
 
-import "github.com/consensys/quorum-go-utils/types"
+import "github.com/ConsenSys/quorum-go-utils/types"
 
 // templates for GraphQL queries
 

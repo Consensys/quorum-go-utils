@@ -10,8 +10,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/consensys/quorum-go-utils/log"
-	"github.com/consensys/quorum-go-utils/types"
+	"github.com/ConsenSys/quorum-go-utils/log"
+	"github.com/ConsenSys/quorum-go-utils/types"
 	"github.com/gorilla/websocket"
 )
 

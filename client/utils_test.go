@@ -3,7 +3,7 @@ package client
 import (
 	"testing"
 
-	"github.com/consensys/quorum-go-utils/types"
+	"github.com/ConsenSys/quorum-go-utils/types"
 	"github.com/stretchr/testify/assert"
 )
 

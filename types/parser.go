@@ -5,7 +5,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/consensys/quorum-go-utils/log"
+	"github.com/ConsenSys/quorum-go-utils/log"
 )
 
 type ParsedTransaction struct {
